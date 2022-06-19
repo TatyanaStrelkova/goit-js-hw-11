@@ -1,49 +1,57 @@
-import 'regenerator-runtime/runtime';
-import axios from 'axios';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import ApiServise from './js/apiService';
 import createGalleryItemMarkup from './js/galleryMarkup.js';
 import refs from './js/refs.js'
 
-const BASE_URL = 'https://pixabay.com/api/';
-const API_KEY = '28117690-7a8a1375fd8d40be55bcdb152';
+const apiServise = new ApiServise();
 
-refs.form.addEventListener('submit', getImageOnFormSubmit)
+refs.form.addEventListener('submit', getImageOnFormSubmit);
+refs.button.addEventListener('click', onLoadButtonClick);
 
-async function getImageOnFormSubmit(e) {
+function getImageOnFormSubmit(e) {
     e.preventDefault();
     refs.gallery.innerHTML = '';
     refs.button.classList.remove('is-hidden');
-    const userSearchQueryValue = e.currentTarget.elements.searchQuery.value.trim();
-    try {
-        const response = await axios.get(BASE_URL, {
-            params: {
-                key: API_KEY,
-                q: userSearchQueryValue,
-                image_type: 'photo',
-                orientation: 'horizontal',
-                safesearch: true,
-            }
-        })
-    /*     if (data.hits.length === 0) { 
+    apiServise.query = e.currentTarget.elements.searchQuery.value;
+    apiServise.resetPage();
+
+    if (apiServise.query === '') {
+        alertEmptySearhInput();
+        return;
+     }
+
+    apiServise.fetchImages().then(({ hits, totalHits }) => {
+       if (hits.length === 0) { 
             failureInput();
             return;
-        } */
-       refs.gallery.insertAdjacentHTML('beforeend', createGalleryItemMarkup(response.data.hits))
-       /*  return response; */
-    } catch (response) {
-      /*   if (response.data.hits === 0) { 
-            failureInput();
-        } */
-       /*  failureInput() */
-         console.log()
-  }
+       }
+        showQuantityOfImages(totalHits)
+        refs.gallery.insertAdjacentHTML('beforeend', createGalleryItemMarkup(hits))
+    })
+    console.log(apiServise)
+} 
+
+function onLoadButtonClick() {
+    apiServise.loadMorePages()
+    apiServise.fetchImages();
+    refs.gallery.insertAdjacentHTML('beforeend', createGalleryItemMarkup(apiServise.response.data.hits))
+    console.log(apiServise.response)
 }
     
 function failureInput() { 
     Notify.failure('Sorry, there are no images matching your search query. Please try again.')
 }
 
+function showQuantityOfImages(quantity) { 
+    Notify.success(`Hooray! We found ${quantity} images.`);
+}
 
+function alertEmptySearhInput() {
+     Notify.failure('The search string cannot be empty. Please specify your search query.')
+}
 
+function endOfResults() {
+    Notify.failure(`We're sorry, but you've reached the end of search results.`)
+}
 
 

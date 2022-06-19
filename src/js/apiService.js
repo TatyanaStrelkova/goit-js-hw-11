@@ -1,21 +1,46 @@
-/* const axios = require('axios');
+import 'regenerator-runtime/runtime';
+import axios from 'axios';
 
-const BASE_URL = 'https://pixabay.com/api/';
-const params = {
-    key: '28117690-7a8a1375fd8d40be55bcdb152',
-    q,
-    image_type: 'photo',
-    orientation: 'horizontal',
-    safesearch: true
-}
-
- async function getImage() {
-  try {
-    const response = await axios.get(`BASE_URL?${params.key}&q=yellow+flowers&&${params.image_type}&${params.orientation}&${params.safesearch}`);
-    console.log(response);
-  } catch (error) {
-    console.error(error);
+ export default class ApiServise {
+  constructor() {
+    this.BASE_URL = 'https://pixabay.com/api/';
+    this.API_KEY = '28117690-7a8a1375fd8d40be55bcdb152';
+    this.searchQuery = '';
+    this.page = 1;
   }
-} */
+   async fetchImages() {
+     
+     this.response = await axios.get(this.BASE_URL, {
+            params: {
+             key: this.API_KEY,
+             q: this.searchQuery,
+             image_type: 'photo',
+             orientation: 'horizontal',
+             safesearch: true,
+             page: this.page,
+             per_page: 40,
+            }
+     })
+     return this.response.data;
+   } 
 
-/* https://pixabay.com/api/?key=28117690-7a8a1375fd8d40be55bcdb152&q=yellow+flowers&image_type=photo */
+   loadMorePages() {
+     this.page += 1;
+   }
+
+   resetPage() {
+     this.page = 1;
+   }
+   
+  get query() { 
+    return this.searchQuery;
+  }
+
+  set query(newQuery) { 
+    this.searchQuery = newQuery;
+}
+} 
+
+
+ 
+ 
