@@ -11,11 +11,11 @@ refs.button.addEventListener('click', onLoadButtonClick);
 function getImageOnFormSubmit(e) {
     e.preventDefault();
     refs.gallery.innerHTML = '';
-    refs.button.classList.remove('is-hidden');
+    refs.button.classList.add('is-hidden');
     apiServise.query = e.currentTarget.elements.searchQuery.value;
     apiServise.resetPage();
 
-    if (apiServise.query === '') {
+    if (!apiServise.query) {
         alertEmptySearhInput();
         return;
      }
@@ -25,6 +25,7 @@ function getImageOnFormSubmit(e) {
             failureInput();
             return;
        }
+        refs.button.classList.add('is-visable');
         showQuantityOfImages(totalHits)
         refs.gallery.insertAdjacentHTML('beforeend', createGalleryItemMarkup(hits))
     })
