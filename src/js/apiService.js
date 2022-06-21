@@ -7,6 +7,7 @@ import axios from 'axios';
     this.API_KEY = '28117690-7a8a1375fd8d40be55bcdb152';
     this.searchQuery = '';
     this.page = 1;
+    this.perPage = 40;
   }
    async fetchImages() {
      
@@ -18,7 +19,7 @@ import axios from 'axios';
              orientation: 'horizontal',
              safesearch: true,
              page: this.page,
-             per_page: 40,
+             per_page: this.perPage,
             }
      })
      return this.response.data;

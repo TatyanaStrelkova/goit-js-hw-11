@@ -2,7 +2,8 @@
 
 export default function createGalleryItemMarkup(photos) {
   return photos.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => { 
-        return `<div class="gallery-item">
+      return `<a class="gallery__link" href="${largeImageURL}" onclick="event.preventDefault()">
+      <div class="gallery-item">
         <img class="gallery-item__img" src="${webformatURL}" alt="${tags}" loading="lazy" />
         <div class="info">
             <p class="info-item">
@@ -18,6 +19,7 @@ export default function createGalleryItemMarkup(photos) {
                 <b>Downloads</b> ${downloads}
             </p>
         </div>
-    </div>`
+    </div>
+    </a>`      
     }).join('');
  }
